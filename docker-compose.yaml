@@ -1,0 +1,110 @@
+
+services:
+  nats-1:
+    image: nats:latest
+    container_name: nats-1
+    command: ["-c", "/etc/nats/nats-server.conf"]
+    volumes:
+      - ./local/nats-cluster/nats-1.conf:/etc/nats/nats-server.conf
+    ports:
+      - "4222:4222"  # Client connection
+      - "6222:6222"  # Cluster communication
+      - "8222:8222"  # Monitoring UI (http://localhost:8222)
+    networks:
+      - mini-trader-network
+
+  nats-2:
+    image: nats:latest
+    container_name: nats-2
+    command: ["-c", "/etc/nats/nats-server.conf"]
+    volumes:
+      - ./local/nats-cluster/nats-2.conf:/etc/nats/nats-server.conf
+    ports:
+      - "4223:4222"  # Client connection
+    networks:
+      - mini-trader-network
+
+  nats-3:
+    image: nats:latest
+    container_name: nats-3
+    command: ["-c", "/etc/nats/nats-server.conf"]
+    volumes:
+      - ./local/nats-cluster/nats-3.conf:/etc/nats/nats-server.conf
+    ports:
+      - "4224:4222"  # Client connection
+    networks:
+      - mini-trader-network
+  
+  market-data-service:
+    build:
+      context: .
+      dockerfile: ./cmd/market-data-service/Dockerfile
+    container_name: mds
+    environment:
+      NATS_SERVER: nats://nats-1:4222
+    depends_on:
+      - nats-1
+      - nats-2
+      - nats-3
+    networks:
+      - mini-trader-network
+
+  redis-1: 
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - mini-trader-network
+  
+  postgres-1:
+      image: postgres:latest
+      container_name: postgres
+      ports:
+        - "5433:5432"
+      environment:
+        POSTGRES_USER: username
+        POSTGRES_PASSWORD: password
+        POSTGRES_DB: optum
+      volumes:
+        - mini-trader-volumes:/var/lib/postgresql/data
+      networks:
+      - mini-trader-network
+    
+  migrate:
+    image: migrate/migrate
+    depends_on:
+      - postgres-1
+    entrypoint: [
+      "sh", "-c", 
+      "migrate -path /migrations -database postgres://username:password@postgres-1:5432/optum?sslmode=disable up"
+    ]
+    volumes:
+      - ./cmd/trader-service/migrations:/migrations
+    networks:
+      - mini-trader-network
+  
+  trader-service:
+    build:
+      context: .
+      dockerfile: ./cmd/trader-service/Dockerfile
+    container_name: ts
+    ports:
+        - "8080:8080"
+    environment:
+      NATS_SERVER: nats://nats-1:4222
+      REDIS_SERVER: redis-1:6379
+      POSTGRES_URL: postgres://username:password@postgres-1:5432/optum?sslmode=disable
+    depends_on:
+      - nats-1
+      - redis-1
+      - migrate
+    networks:
+      - mini-trader-network
+
+networks:
+  mini-trader-network:
+    driver: bridge
+
+volumes:
+  mini-trader-volumes:

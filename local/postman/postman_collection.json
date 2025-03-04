@@ -1,0 +1,90 @@
+{
+	"info": {
+		"_postman_id": "ffa97937-0d99-461c-93fb-b7ffcc730cbc",
+		"name": "Optum Task",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22792567"
+	},
+	"item": [
+		{
+			"name": "Get Quote",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"user_id\", jsonData.quote.user_id);",
+							"postman.setEnvironmentVariable(\"quote_id\", jsonData.quote.quote_id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": \"asd\",\n    \"ticker\": \"ETH-USDT\",\n    \"quantity\": 2,\n    \"side\": \"asd\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/trader/get-quote",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"trader",
+						"get-quote"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accept Quote",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"quote_id\": \"{{quote_id}}\",\n    \"user_id\": \"{{user_id}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/trader/accept-quote",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"trader",
+						"accept-quote"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
