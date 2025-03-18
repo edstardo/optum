@@ -1,7 +1,7 @@
 package trader
 
 import (
-	"github.com/edstardo/mini-trader/pgk/postgres"
+	"github.com/edstardo/optum/pgk/postgres"
 )
 
 type TradeRepo interface {

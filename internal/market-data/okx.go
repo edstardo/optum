@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/edstardo/mini-trader/external/okx"
+	"github.com/edstardo/optum/external/okx"
 	"github.com/sirupsen/logrus"
 )
 

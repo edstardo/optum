@@ -11,7 +11,7 @@ services:
       - "6222:6222"  # Cluster communication
       - "8222:8222"  # Monitoring UI (http://localhost:8222)
     networks:
-      - mini-trader-network
+      - optum-network
 
   nats-2:
     image: nats:latest
@@ -22,7 +22,7 @@ services:
     ports:
       - "4223:4222"  # Client connection
     networks:
-      - mini-trader-network
+      - optum-network
 
   nats-3:
     image: nats:latest
@@ -33,7 +33,7 @@ services:
     ports:
       - "4224:4222"  # Client connection
     networks:
-      - mini-trader-network
+      - optum-network
   
   market-data-service:
     build:
@@ -47,7 +47,7 @@ services:
       - nats-2
       - nats-3
     networks:
-      - mini-trader-network
+      - optum-network
 
   redis-1: 
     image: redis:alpine
@@ -55,7 +55,7 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - mini-trader-network
+      - optum-network
   
   postgres-1:
       image: postgres:latest
@@ -67,9 +67,9 @@ services:
         POSTGRES_PASSWORD: password
         POSTGRES_DB: optum
       volumes:
-        - mini-trader-volumes:/var/lib/postgresql/data
+        - optum-volumes:/var/lib/postgresql/data
       networks:
-      - mini-trader-network
+      - optum-network
     
   migrate:
     image: migrate/migrate
@@ -82,7 +82,7 @@ services:
     volumes:
       - ./cmd/trader-service/migrations:/migrations
     networks:
-      - mini-trader-network
+      - optum-network
   
   trader-service:
     build:
@@ -100,11 +100,11 @@ services:
       - redis-1
       - migrate
     networks:
-      - mini-trader-network
+      - optum-network
 
 networks:
-  mini-trader-network:
+  optum-network:
     driver: bridge
 
 volumes:
-  mini-trader-volumes:
+  optum-volumes:

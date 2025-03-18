@@ -8,8 +8,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/edstardo/mini-trader/internal/trader"
-	"github.com/edstardo/mini-trader/pgk/postgres"
+	"github.com/edstardo/optum/internal/trader"
+	"github.com/edstardo/optum/pgk/postgres"
 	natsio "github.com/nats-io/nats.go"
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"

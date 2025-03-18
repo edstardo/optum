@@ -15,7 +15,7 @@ COPY . .
 RUN GOOS=linux GOARCH=amd64 go build -o service ./cmd/trader-service
 
 # Use a minimal base image for the final stage
-FROM alpine:latest
+FROM ubuntu:22.04
 
 # Set working directory inside the container
 WORKDIR /app

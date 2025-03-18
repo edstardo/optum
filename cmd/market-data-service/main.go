@@ -7,7 +7,7 @@ import (
 	"strings"
 	"syscall"
 
-	marketdata "github.com/edstardo/mini-trader/internal/market-data"
+	marketdata "github.com/edstardo/optum/internal/market-data"
 	"github.com/sirupsen/logrus"
 )
 

@@ -57,8 +57,8 @@ $ make down
 ## Confirm Live Prices
 Via Docker Logs
 ```
-$ docker logs mds
-$ docker logs ts
+$ watch docker logs mds
+$ watch docker logs ts
 ```
 or via NATS cli
 ```

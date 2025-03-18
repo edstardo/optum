@@ -8,8 +8,8 @@ up:
 
 down:
 	@docker-compose down 
-	@docker image rm mini-trader-market-data-service --force
-	@docker image rm mini-trader-trader-service --force
+	@docker image rm optum-market-data-service --force
+	@docker image rm optum-trader-service --force
 
 restart:
 	@make down && make up
