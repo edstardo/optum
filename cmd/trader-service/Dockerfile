@@ -1,31 +1,24 @@
-# Use official Golang image to build the application
-FROM golang:1.23.0 AS builder
 
-# Set the working directory inside the container
+FROM golang:1.23 as builder
+
 WORKDIR /app
 
-# Copy the Go modules files and download dependencies
-COPY go.* ./
+COPY go.mod go.sum ./
+
 RUN go mod download
 
-# Copy the entire project into the container
 COPY . .
 
-# Build the Go application
-RUN GOOS=linux GOARCH=amd64 go build -o service ./cmd/trader-service
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o /app/bin/service ./cmd/trader-service
 
-CMD ["./service"]
+FROM gcr.io/distroless/static:nonroot
 
-# # Use a minimal base image for the final stage
-# FROM alpine:latest
+WORKDIR /app
 
-# # Set working directory inside the container
-# WORKDIR /app
+COPY --from=builder /app/bin/service /app/service
 
-# # Copy the compiled binary from the builder stage
-# COPY --from=builder /app/service .
+USER nonroot:nonroot
 
-# EXPOSE 8080
+EXPOSE 8080
 
-# # Command to run the application
-# CMD ["./service"]
+ENTRYPOINT ["/app/service"]
